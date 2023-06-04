@@ -1,0 +1,60 @@
+.file-upload {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.file-upload img {
+  max-height: 200px;
+}
+
+#drop-zone {
+  border: 1px solid #114bde4e;
+  border-radius: 10px;
+  color: #c6c6c6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 200px;
+  height: 100px;
+  padding: 20px;
+  text-align: center;
+  transition: 0.5s;
+}
+
+#drop-zone * {
+  pointer-events: none;
+}
+
+#drop-zone.drag-over {
+  opacity: 0.5;
+}
+
+.preview-wrapper {
+  width: 50vw;
+  overflow-x: auto;
+}
+
+.preview {
+  display: flex;
+}
+
+.preview img {
+  margin: 5px;
+}
+
+@media screen and (max-width: 768px) {
+  .file-upload {
+    flex-direction: column;
+  }
+  .drag-drop-box {
+    display: none;
+  }
+
+  .file-upload img {
+    max-width: 90vw;
+  }
+  .preview-wrapper {
+    width: 85vw;
+  }
+}
