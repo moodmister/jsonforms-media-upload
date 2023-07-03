@@ -1,5 +1,4 @@
-import React from 'react';
-import { InputLabel } from '@mui/material';
+import React, { useMemo } from 'react';
 
 interface FileUploadProps {
   id?: string;
@@ -8,37 +7,37 @@ interface FileUploadProps {
 }
 
 export const FileUpload: React.FC<FileUploadProps> = ({ id, fileUrls, updateFileUrls }) => {
-  const setPreview = (urls: string[]) => {
-    if (urls) {
-      const images: any[] = [];
-      urls.forEach((url: string) => {
-        images.push(<a href={url} target='_blank' rel="noreferrer"><img src={url} alt={url}></img></a>);
-      });
-      return images;
+  const imgTags = useMemo(() => {
+    if (fileUrls) {
+      return fileUrls.map(url => <img src={url} alt={url.split('/').pop()} key={url.split('/').pop()}></img>);
     }
-    return <></>
-  };
-
+  }, [fileUrls]);
   const handleFile = (event: any) => {
-    const fileUrls: string[] = [];
+    const newFileUrls: string[] = [];
+    if (fileUrls) {
+      fileUrls.forEach(url => { newFileUrls.push(url) });
+    }
     if (event.target.files) {
-      console.log(event.target.files);
       [...event.target.files].forEach((file: any) => {
-        fileUrls.push(URL.createObjectURL(file));
+        const url = URL.createObjectURL(file);
+        newFileUrls.push(url);
       });
-      updateFileUrls(fileUrls);
+      updateFileUrls(newFileUrls);
     }
   };
 
   const dropHandler = (event: any) => {
     event.preventDefault();
     if (event.dataTransfer.items) {
-      const fileUrls: string[] = [];
-      [...event.dataTransfer.items].forEach((item, i) => {
+      const newFileUrls: string[] = [];
+      if (fileUrls) {
+        fileUrls.forEach(url => { newFileUrls.push(url) });
+      }
+      [...event.dataTransfer.items].forEach(item => {
         if (item.kind === 'file') {
-          fileUrls.push(URL.createObjectURL(item.getAsFile()));
+          newFileUrls.push(URL.createObjectURL(item.getAsFile()));
         }
-        updateFileUrls(fileUrls);
+        updateFileUrls(newFileUrls);
       });
     }
     event.target.classList.remove('drag-over');
@@ -57,12 +56,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ id, fileUrls, updateFile
     <>
       <div className='file-upload'>
         <div className="form">
-          <InputLabel shrink>Upload file</InputLabel>
-          <br />
-          <input type='file' accept='image/*' multiple onChange={handleFile}></input>
-          <br />
           <div className="drag-drop-box">
-            <p>or</p>
             <div
               id='drop-zone'
               onDrop={(event) => {
@@ -78,20 +72,12 @@ export const FileUpload: React.FC<FileUploadProps> = ({ id, fileUrls, updateFile
                 dragLeaveHandler(event);
               }}
               >
-              <p>
-                Drag one or more files to this <i>drop zone</i>.
-              </p>
+              <input type='file' accept='image/*' multiple onChange={handleFile}></input>
+              {imgTags}
             </div>
           </div>
-          <button onClick={() => {updateFileUrls([])}}>Clear</button>
         </div>
-        <div className="preview-wrapper">
-          <div className="preview">
-            {
-              setPreview(fileUrls)
-            }
-          </div>
-        </div>
+        <button onClick={() => {updateFileUrls([])}}>Clear</button>
       </div>
     </>
   );
