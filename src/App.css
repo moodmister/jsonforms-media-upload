@@ -73,9 +73,6 @@
     flex-direction: column;
   }
 
-  .file-upload img {
-    max-width: 90vw;
-  }
   .preview-wrapper {
     width: 85vw;
   }
