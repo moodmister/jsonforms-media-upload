@@ -2,42 +2,44 @@ import React, { useMemo } from 'react';
 
 interface FileUploadProps {
   id?: string;
-  fileUrls: string[];
-  updateFileUrls: (newValue: string[]) => void;
+  files: File[];
+  updateFiles: (newValue: File[]) => void;
 }
 
-export const FileUpload: React.FC<FileUploadProps> = ({ id, fileUrls, updateFileUrls }) => {
+export const FileUpload: React.FC<FileUploadProps> = ({ id, files, updateFiles }) => {
   const imgTags = useMemo(() => {
-    if (fileUrls) {
-      return fileUrls.map(url => <img src={url} alt={url.split('/').pop()} key={url.split('/').pop()}></img>);
+    if (files) {
+      return files.map(file => {
+        const url = URL.createObjectURL(file);
+        return <img src={url} alt={url.split('/').pop()} key={url.split('/').pop()}></img>
+      });
     }
-  }, [fileUrls]);
+  }, [files]);
   const handleFile = (event: any) => {
-    const newFileUrls: string[] = [];
-    if (fileUrls) {
-      fileUrls.forEach(url => { newFileUrls.push(url) });
+    const newFiles: File[] = [];
+    if (files) {
+      files.forEach(url => { newFiles.push(url) });
     }
     if (event.target.files) {
       [...event.target.files].forEach((file: any) => {
-        const url = URL.createObjectURL(file);
-        newFileUrls.push(url);
+        newFiles.push(file);
       });
-      updateFileUrls(newFileUrls);
+      updateFiles(newFiles);
     }
   };
 
   const dropHandler = (event: any) => {
     event.preventDefault();
     if (event.dataTransfer.items) {
-      const newFileUrls: string[] = [];
-      if (fileUrls) {
-        fileUrls.forEach(url => { newFileUrls.push(url) });
+      const newFiles: File[] = [];
+      if (files) {
+        files.forEach(url => { newFiles.push(url) });
       }
       [...event.dataTransfer.items].forEach(item => {
         if (item.kind === 'file') {
-          newFileUrls.push(URL.createObjectURL(item.getAsFile()));
+          newFiles.push(item.getAsFile());
         }
-        updateFileUrls(newFileUrls);
+        updateFiles(newFiles);
       });
     }
     event.target.classList.remove('drag-over');
@@ -77,7 +79,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ id, fileUrls, updateFile
             </div>
           </div>
         </div>
-        <button onClick={() => {updateFileUrls([])}}>Clear</button>
+        <button onClick={() => {updateFiles([])}}>Clear</button>
       </div>
     </>
   );

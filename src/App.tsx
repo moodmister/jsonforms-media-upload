@@ -16,7 +16,7 @@ const initialData = {
   locations: [
     {
       files: [],
-      location: [43.835636, 25.960977]
+      coordinates: [43.835636, 25.960977]
     }
   ]
 };
@@ -31,10 +31,10 @@ const schema: JsonSchema = {
           files: {
             type: 'array',
             items: {
-              type:'string'
+              type:'object'
             }
           },
-          location: {
+          coordinates: {
             type: 'array',
             items: {
               type: 'number'
@@ -64,7 +64,7 @@ const uischema = {
             },
             {
               type: 'Control',
-              scope: '#/properties/location'
+              scope: '#/properties/coordinates'
             },
             {
               type: 'Control',
@@ -96,6 +96,29 @@ function App() {
       return;
     }
     const formData = new FormData();
+    data.locations.forEach((location: any) => {
+      const coordinates = location.coordinates || [];
+      const description = location.description || '';
+      formData.append('location', coordinates);
+      formData.append('description', description);
+      location.files.forEach((file: any) => {
+        formData.append('file', file);
+      })
+    });
+    fetch('https://httpbin.org/post', {
+      method: 'post',
+      body: formData,
+    }).then(
+      response => {
+        if (response) {
+          return response.text()
+        }
+      }
+    ).then(
+      (body => {
+        console.log(body);
+      })
+    );
   };
 
   return (
