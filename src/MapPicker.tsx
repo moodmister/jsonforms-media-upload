@@ -18,7 +18,7 @@ export const MapPicker: React.FC<MapPickerProps> = ({ id, position, updatePositi
       iconAnchor: [13, 42],
       popupAnchor: [0, -41]
     });
-  const initialCenter = position;
+  const initialCenter = position || [0, 0];
 
   const handleMoveEnd = (ev) => {
     const latLng = ev.target.getLatLng();
@@ -31,7 +31,7 @@ export const MapPicker: React.FC<MapPickerProps> = ({ id, position, updatePositi
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-      <Marker draggable={true} eventHandlers={{ moveend: handleMoveEnd }} position={position} icon={myIcon}>
+      <Marker draggable={true} eventHandlers={{ moveend: handleMoveEnd }} position={initialCenter} icon={myIcon}>
         </Marker>
       </MapContainer>
   </>;

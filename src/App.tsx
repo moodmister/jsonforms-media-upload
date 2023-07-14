@@ -96,15 +96,19 @@ function App() {
       return;
     }
     const formData = new FormData();
+
+    formData.append('document', new Blob([JSON.stringify(data)], { type: 'application/json' }));
     data.locations.forEach((location: any) => {
-      const coordinates = location.coordinates || [];
-      const description = location.description || '';
-      formData.append('location', coordinates);
-      formData.append('description', description);
+      // const coordinates = location.coordinates || [];
+      // const description = location.description || '';
+      // formData.append('location', coordinates);
+      // formData.append('description', description);
       location.files.forEach((file: any) => {
-        formData.append('file', file);
-      })
+        formData.append('uuid_id', file);
+      });
     });
+
+    console.log(data);
     fetch('https://httpbin.org/post', {
       method: 'post',
       body: formData,
